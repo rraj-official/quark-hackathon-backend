@@ -1,39 +1,50 @@
 # app.py
-from fastapi import FastAPI, HTTPException
+import io
+from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import List
 import sys
 import uvicorn
-
+from pydub import AudioSegment
+from pydub.playback import play
+# Import our language chain components and helper functions
 from langchain_community.llms import Ollama
 from document_loader import load_documents_into_database
 from models import check_if_model_is_available
-
-# Import some functions and classes used to build the chain
 from operator import itemgetter
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from langchain_core.messages import get_buffer_string
 from langchain.prompts.prompt import PromptTemplate
-from typing import List
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 
 # Import our prompt templates and helper functions from llm.py
 from llm import CONDENSE_QUESTION_PROMPT, ANSWER_PROMPT, _combine_documents, memory
 
+# Import the speech-to-text function (assumed to be implemented in speech.py)
+from speech import speech_to_text
+
 app = FastAPI()
+
+# Configure CORS as needed.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # or ["*"] to allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Request and response data models
 class ChatMessage(BaseModel):
     content: str
     role: str
 
-class AnswerResponse(BaseModel):
-    answer: str
-
-# Define a new request model to wrap the messages
 class ChatRequest(BaseModel):
     messages: List[ChatMessage]
+
+class AnswerResponse(BaseModel):
+    answer: str
 
 # On startup, we load our models and build our chain.
 @app.on_event("startup")
@@ -62,7 +73,6 @@ def startup_event():
     llm = Ollama(model=llm_model_name)
 
     # Build the retrieval chain.
-    # (This is adapted from your getChatChain but modified so that the function returns the answer.)
     retriever = db.as_retriever(search_kwargs={"k": 10})
     loaded_memory = RunnablePassthrough.assign(
         chat_history=RunnableLambda(memory.load_memory_variables) | itemgetter("history")
@@ -83,7 +93,7 @@ def startup_event():
         "context": lambda x: _combine_documents(x["docs"]),
         "question": itemgetter("question"),
     }
-    # Here we remove streaming callbacks so that we can capture the answer
+    # Remove streaming callbacks so that we can capture the answer
     answer_chain = {
         "answer": final_inputs | ANSWER_PROMPT | llm.with_config(callbacks=[]),
         "docs": itemgetter("docs"),
@@ -94,24 +104,57 @@ def startup_event():
     def chat_api(question: str) -> str:
         inputs = {"question": question}
         result = final_chain.invoke(inputs)
-        # Save to memory (if desired)
+        # Optionally save to memory
         memory.save_context(inputs, {"answer": result["answer"]})
         return result["answer"]
 
     # Save our callable chain on the FastAPI app state.
     app.state.chat = chat_api
 
-# Define the API endpoint that accepts a question and returns an answer.
-
-@app.post("/ask", response_model=AnswerResponse)
-def ask_question(request: ChatRequest):
+# Endpoint to process text input.
+@app.post("/text", response_model=AnswerResponse)
+def process_text(request: ChatRequest):
     try:
-        # Use the content of the last message in the list
+        # Process the content of the last message in the list.
         answer = app.state.chat(request.messages[-1].content)
         return AnswerResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Endpoint to process voice input.
+@app.post("/voice", response_model=AnswerResponse)
+async def process_voice(file: UploadFile = File(...)):
+    try:
+        # Read the uploaded file as bytes
+        # file_bytes = await file.read()
+        
+        # # Wrap the bytes in a BytesIO object
+        # audio_file = io.BytesIO(file_bytes)
+        
+        # # Determine the file format from the filename (e.g., 'wav', 'mp3')
+        # # You might want to add more robust checking depending on your needs.
+        # file_extension = file.filename.split(".")[-1]
+        
+        # # # Load the audio file using PyDub
+        # audio_segment = AudioSegment.from_file(audio_file, format=file_extension)
+        
+        # # # Play the audio file
+        # play(audio_segment)
+        
+        # # If your speech_to_text function expects a file-like object,
+        # # reset the pointer in the BytesIO object.
+        # audio_file.seek(0)
+        
+        # # Convert the uploaded audio file to text
+        text_input = speech_to_text(file)
+        print(text_input)
+        # # Pass the transcribed text to the chat chain
+        answer = app.state.chat(text_input)
+        
+        return AnswerResponse(answer=answer)
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 if __name__ == "__main__":
     # Run the app with uvicorn. The reload flag is handy for development.
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

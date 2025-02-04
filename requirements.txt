@@ -10,3 +10,8 @@ fastapi
 uvicorn
 sentence-transformers
 einops
+python-multipart
+whisper
+torch
+torchvision
+torchaudio
