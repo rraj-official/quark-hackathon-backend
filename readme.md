@@ -1,52 +1,152 @@
-# Local LLM with RAG
+[**Frontend UI Link**](https://quark-hackathon-frontend.vercel.app/)
+# InsureWise Chatbot
 
-<p align="center">
-    <img src="images/wizard_experimenting.jpg" alt="A wizard experimenting - Leonardo AI" width="600">
-</p>
+InsureWise is a scalable, multilingual chatbot designed to deliver real-time, reliable insights on life insurance information. By leveraging efficient models and retrieval-augmented generation (RAG), InsureWise ensures users get the most accurate, context-aware responses about insurance policies from leading agencies like LIC and MaxLife.
 
-This project is an experimental sandbox for testing out ideas related to running local Large Language Models (LLMs) with [Ollama](https://ollama.ai/) to perform Retrieval-Augmented Generation (RAG) for answering questions based on sample PDFs. In this project, we are also using Ollama to create embeddings with the [nomic-embed-text](https://ollama.com/library/nomic-embed-text) to use with [Chroma](https://docs.trychroma.com/). Please note that the embeddings are reloaded each time the application runs, which is not efficient and is only done here for testing purposes.
+## Table of Contents
 
-[![asciicast](https://asciinema.org/a/fepTvXf1UiDpRUhhNiswL8isu.svg)](https://asciinema.org/a/fepTvXf1UiDpRUhhNiswL8isu)
+- [Introduction](#introduction)
+- [Context](#context)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quickstart](#quickstart)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
-There is also a web UI created using [Streamlit](https://streamlit.io/) to provide a different way to interact with Ollama.
+## Introduction
 
-<p align="center">
-    <img src="images/streamlit_ui.png" alt="Screenshot of Streamlit web UI" width="600">
-</p>
+InsureWise is built on an open-source framework that emphasizes flexibility, transparency, and cost-efficiency. Its design enables effortless scalability and multilingual support, ensuring users from diverse regions have access to accurate and up-to-date life insurance information. With an efficient small language model and a robust RAG-powered backend, InsureWise is poised to handle large volumes of queries while maintaining high accuracy.
 
-## Requirements
+![InsureWise Screenshot](screenshot.png)
 
-- [Ollama](https://ollama.ai/) verson 0.1.26 or higher.
+## Context
 
-## Setup
+- **Scalable and Multilingual:**  
+  InsureWise supports multiple languages, allowing users worldwide to access localized life insurance information.
 
-1. Clone this repository to your local machine.
-2. Create a Python virtual environment by running `python3 -m venv .venv`.
-3. Activate the virtual environment by running `source .venv/bin/activate` on Unix or MacOS, or `.\.venv\Scripts\activate` on Windows.
-4. Install the required Python packages by running `pip install -r requirements.txt`.
+- **Open-Source Framework:**  
+  The framework promotes transparency, flexibility, and continuous community contributions, ensuring that the system remains up-to-date and adaptable.
 
-## Running the Project
+- **Efficient Response Generation:**  
+  Leveraging a small language model (Mistral), InsureWise delivers quick, contextually relevant responses even during high-load scenarios.
 
-**Note:** The first time you run the project, it will download the necessary models from Ollama for the LLM and embeddings. This is a one-time setup process and may take some time depending on your internet connection.
+- **Retrieval-Augmented Generation (RAG):**  
+  The backend integrates RAG to fetch the latest information from major insurance providers such as LIC and MaxLife, ensuring that users receive accurate and real-time insights.
 
-1. Ensure your virtual environment is activated.
-2. Run the main script with `python app.py -m <model_name> -p <path_to_documents>` to specify a model and the path to documents. If no model is specified, it defaults to [mistral](https://ollama.com/library/mistral). If no path is specified, it defaults to `Research` located in the repository for example purposes.
-3. Optionally, you can specify the embedding model to use with `-e <embedding_model_name>`. If not specified, it defaults to [nomic-embed-text](https://ollama.com/library/nomic-embed-text).
+## Features
 
-This will load the PDFs and Markdown files, generate embeddings, query the collection, and answer the question defined in `app.py`.
+1. **Enriched Information Retrieval from RAG:**  
+   - Provides correct and detailed information on life insurance policies in real time.
+   - Guides users on where to find relevant documents with high accuracy.
 
-## Running the Streamlit UI
+2. **Multilingual Support:**  
+   - Caters to a global audience by supporting multiple languages.
 
-1. Ensure your virtual environment is activated.
-2. Navigate to the directory containing the `ui.py` script.
-3. Run the Streamlit application by executing `streamlit run ui.py` in your terminal.
+3. **Voice Interaction:**  
+   - Enables users to interact with the chatbot using voice commands for a hands-free experience.
 
-This will start a local web server and open a new tab in your default web browser where you can interact with the application. The Streamlit UI allows you to select models, select a folder, providing an easier and more intuitive way to interact with the RAG chatbot system compared to the command-line interface. The application will handle the loading of documents, generating embeddings, querying the collection, and displaying the results interactively.
+4. **Contextual Conversational Analysis:**  
+   - Maintains conversation context for more natural and intuitive interactions.
 
-## Technologies Used
+5. **User-Friendly Interface:**  
+   - Offers a simple and crisp UI with options for dark and light mode to enhance usability.
 
-- [Langchain](https://github.com/langchain/langchain): A Python library for working with Large Language Model
-- [Ollama](https://ollama.ai/): A platform for running Large Language models locally.
-- [Chroma](https://docs.trychroma.com/): A vector database for storing and retrieving embeddings.
-- [PyPDF](https://pypi.org/project/PyPDF2/): A Python library for reading and manipulating PDF files.
-- [Streamlit](https://streamlit.io/): A web framework for creating interactive applications for machine learning and data science projects.
+## Tech Stack
+
+- **Backend:**
+  - **Language:** Python
+  - **Models:**  
+    - Small language model: **Mistral**
+    - Embedded model: **nomic-embed-text-v1**
+  - **Approach:** Retrieval-Augmented Generation (RAG)
+- **Frontend:**
+  - **Framework:** Next.js
+  - **Package Manager/Dev Server:** Bun
+- **Others:**  
+  Open-source principles ensuring transparency and continuous community improvement.
+
+## Quickstart
+
+### Frontend
+
+1. **Install Dependencies:**
+
+   ```bash
+   bun install
+   ```
+
+2. **Run the Development Server:**
+
+   ```bash
+   bun dev
+   ```
+
+### Backend
+1. **Clone the Backend repo:**
+     ```bash
+     git clone https://github.com/rraj-official/quark-hackathon-backend.git
+     ```
+2. **Set Up a Virtual Environment:**
+
+   - **macOS/Linux:**
+
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+
+   - **Windows:**
+
+     ```bash
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+
+3. **Install Required Python Packages:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the Backend Server:**
+
+   ```bash
+   python3 app.py
+   ```
+
+## Configuration
+
+Before running the application, ensure you configure any necessary environment variables and configuration files. This may include API keys, model paths, or credentials required to connect to external data sources (e.g., LIC, MaxLife).
+
+## Usage
+
+Once both the frontend and backend servers are running, open your browser and navigate to [http://localhost:3000](http://localhost:3000) (or your designated port). Interact with the chatbot using text or voice commands to receive real-time, context-aware responses about various life insurance policies.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps to contribute:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -m 'Add YourFeature'`).
+4. Push the branch (`git push origin feature/YourFeature`).
+5. Open a Pull Request detailing your changes.
+
+For major changes, please open an issue first to discuss your proposed changes.
+
+<!-- ## License
+
+This project is licensed under the [MIT License](LICENSE). -->
+
+## Acknowledgments
+
+- Thanks to the open-source community for their contributions and ongoing support.
+- Acknowledgment to Wissen for providing reliable life insurance data.
+- Appreciation for the developers and maintainers of Next.js, Bun, and the Python ecosystem for the robust tools and frameworks that power InsureWise.
+
+Happy coding and enjoy your journey with InsureWise!
