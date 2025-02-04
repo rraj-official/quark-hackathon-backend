@@ -1,7 +1,6 @@
 # app.py
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
 import sys
 import uvicorn
 
@@ -15,24 +14,26 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from langchain_core.messages import get_buffer_string
 from langchain.prompts.prompt import PromptTemplate
+from typing import List
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 # Import our prompt templates and helper functions from llm.py
 from llm import CONDENSE_QUESTION_PROMPT, ANSWER_PROMPT, _combine_documents, memory
 
 app = FastAPI()
 
-# Define a model for each individual message
-class Message(BaseModel):
-    role: str
+# Request and response data models
+class ChatMessage(BaseModel):
     content: str
+    role: str
 
-# Update the request model to accept an array of messages
-class QuestionRequest(BaseModel):
-    messages: List[Message]
-
-# Response model remains the same
 class AnswerResponse(BaseModel):
     answer: str
+
+# Define a new request model to wrap the messages
+class ChatRequest(BaseModel):
+    messages: List[ChatMessage]
 
 # On startup, we load our models and build our chain.
 @app.on_event("startup")
@@ -100,19 +101,16 @@ def startup_event():
     # Save our callable chain on the FastAPI app state.
     app.state.chat = chat_api
 
-# Define the API endpoint that accepts a messages array and returns an answer.
+# Define the API endpoint that accepts a question and returns an answer.
+
 @app.post("/ask", response_model=AnswerResponse)
-def ask_question(request: QuestionRequest):
+def ask_question(request: ChatRequest):
     try:
-        if not request.messages:
-            raise HTTPException(status_code=400, detail="No messages provided.")
-        # Use the content of the last message as the question
-        question = request.messages[-1].content
-        answer = app.state.chat(question)
+        # Use the content of the last message in the list
+        answer = app.state.chat(request.messages[-1].content)
         return AnswerResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 if __name__ == "__main__":
     # Run the app with uvicorn. The reload flag is handy for development.
