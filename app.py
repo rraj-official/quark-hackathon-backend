@@ -1,6 +1,7 @@
 # app.py
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import List
 import sys
 import uvicorn
 
@@ -20,10 +21,16 @@ from llm import CONDENSE_QUESTION_PROMPT, ANSWER_PROMPT, _combine_documents, mem
 
 app = FastAPI()
 
-# Request and response data models
-class QuestionRequest(BaseModel):
-    question: str
+# Define a model for each individual message
+class Message(BaseModel):
+    role: str
+    content: str
 
+# Update the request model to accept an array of messages
+class QuestionRequest(BaseModel):
+    messages: List[Message]
+
+# Response model remains the same
 class AnswerResponse(BaseModel):
     answer: str
 
@@ -93,12 +100,15 @@ def startup_event():
     # Save our callable chain on the FastAPI app state.
     app.state.chat = chat_api
 
-
-# Define the API endpoint that accepts a question and returns an answer.
+# Define the API endpoint that accepts a messages array and returns an answer.
 @app.post("/ask", response_model=AnswerResponse)
 def ask_question(request: QuestionRequest):
     try:
-        answer = app.state.chat(request.question)
+        if not request.messages:
+            raise HTTPException(status_code=400, detail="No messages provided.")
+        # Use the content of the last message as the question
+        question = request.messages[-1].content
+        answer = app.state.chat(question)
         return AnswerResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
