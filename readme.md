@@ -73,25 +73,24 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
 ## Quickstart
 
 ### Frontend
-
-1. **Install Dependencies:**
+1. **Clone the Frontend repo:**
+     ```bash
+     git clone https://github.com/rraj-official/quark-hackathon-frontend.git
+     ```
+2. **Install Dependencies:**
 
    ```bash
    bun install
    ```
 
-2. **Run the Development Server:**
+3. **Run the Development Server:**
 
    ```bash
    bun dev
    ```
 
 ### Backend
-1. **Clone the Backend repo:**
-     ```bash
-     git clone https://github.com/rraj-official/quark-hackathon-backend.git
-     ```
-2. **Set Up a Virtual Environment:**
+1. **Set Up a Virtual Environment:**
 
    - **macOS/Linux:**
 
@@ -107,13 +106,13 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
      venv\Scripts\activate
      ```
 
-3. **Install Required Python Packages:**
+2. **Install Required Python Packages:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the Backend Server:**
+3. **Run the Backend Server:**
 
    ```bash
    python3 app.py
