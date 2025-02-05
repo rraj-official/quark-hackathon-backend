@@ -1,4 +1,5 @@
 [**Frontend UI Link**](https://quark-hackathon-frontend.vercel.app/)
+
 # InsureWise Chatbot
 
 InsureWise is a scalable, multilingual chatbot designed to deliver real-time, reliable insights on life insurance information. By leveraging efficient models and retrieval-augmented generation (RAG), InsureWise ensures users get the most accurate, context-aware responses about insurance policies from leading agencies like LIC and MaxLife.
@@ -74,18 +75,15 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
 
 ### Frontend
 1. **Clone the Frontend repo:**
-     ```
-     git clone https://github.com/rraj-official/quark-hackathon-frontend.git
-     ```
-2. **Install Dependencies:**
-
+   ```bash
+   git clone https://github.com/rraj-official/quark-hackathon-frontend.git
    ```
+2. **Install Dependencies:**
+   ```bash
    bun install
    ```
-
 3. **Run the Development Server:**
-
-   ```
+   ```bash
    bun dev
    ```
 
@@ -145,14 +143,33 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
        venv\Scripts\activate
        ```
 
-3. **Install Required Python Packages:**
-
-   ```
+2. **Install Required Python Packages:**
+   ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the Backend Server:**
+3. **Start the Translation Server (in a Separate Terminal Window):**
+   In order to enable multilingual support, open a **separate terminal window** and perform the following:
+   - **Activate the Virtual Environment:**
+     - **macOS/Linux:**
+       ```bash
+       source venv/bin/activate
+       ```
+     - **Windows:**
+       ```bash
+       venv\Scripts\activate
+       ```
+   - **Install Requirements (if not already installed):**
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - **Run the Translation Server:**
+     ```bash
+     python translate_server.py
+     ```
 
+4. **Run the Backend Server:**
+   In your original terminal (with the virtual environment activated), start the main backend server:
    ```bash
    python3 app.py
    ```
