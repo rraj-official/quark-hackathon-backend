@@ -13,7 +13,6 @@ InsureWise is a scalable, multilingual chatbot designed to deliver real-time, re
 - [Quickstart](#quickstart)
   - [Frontend](#frontend)
   - [Backend](#backend)
-- [Configuration](#configuration)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -176,10 +175,6 @@ https://www.youtube.com/watch?v=zTwVBB9UB9s
    ```bash
    python3 app.py
    ```
-
-## Configuration
-
-Before running the application, ensure you configure any necessary environment variables and configuration files. This may include API keys, model paths, or credentials required to connect to external data sources (e.g., LIC, MaxLife).
 
 ## Usage
 
