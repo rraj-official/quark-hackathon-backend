@@ -1,5 +1,6 @@
 # app.py
 import io
+import requests
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -45,6 +46,21 @@ class ChatRequest(BaseModel):
 
 class AnswerResponse(BaseModel):
     answer: str
+
+def translate_text(text, source='auto', target='es'):
+    url = 'http://localhost:5000/translate'
+    payload = {
+        'q': text,
+        'source': source,
+        'target': target
+    }
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    if response.ok:
+        return response.json()
+    else:
+        print("Error:", response.status_code, response.text)
+        return None
 
 # On startup, we load our models and build our chain.
 @app.on_event("startup")
@@ -116,8 +132,13 @@ def startup_event():
 def process_text(request: ChatRequest):
     try:
         # Process the content of the last message in the list.
-        answer = app.state.chat(request.messages[-1].content)
-        return AnswerResponse(answer=answer)
+        text = request.messages[-1].content
+        translated_text_json_1 = translate_text(text, target='en')
+        answer = app.state.chat(translated_text_json_1['translatedText'])
+        translated_text_json_2 = translate_text(answer, source='en', target = translated_text_json_1['detectedSourceLanguage'])
+        return AnswerResponse(answer=translated_text_json_2['translatedText'])
+        # answer = app.state.chat(text)
+        # return AnswerResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -146,12 +167,17 @@ async def process_voice(file: UploadFile = File(...)):
         # audio_file.seek(0)
         
         # # Convert the uploaded audio file to text
-        text_input = speech_to_text(file)
+        text_input, lang = speech_to_text(file)
         print(text_input)
         # # Pass the transcribed text to the chat chain
-        answer = app.state.chat(text_input)
-        
-        return AnswerResponse(answer=answer)
+        if lang != 'en':
+            translated_text_json = translate_text(text_input, lang, 'en')
+            answer = app.state.chat(translated_text_json['translatedText'])
+            translated_text_json = translate_text(answer, 'en', lang)
+            return AnswerResponse(answer=translated_text_json['translatedText'])
+        else:
+            answer = app.state.chat(text_input)
+            return AnswerResponse(answer=answer)
     except Exception as e:
         print(str(e))
         raise HTTPException(status_code=500, detail=str(e))

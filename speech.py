@@ -7,7 +7,7 @@ from fastapi import UploadFile
 # Load the Whisper model once (outside the function to avoid reloading)
 model = whisper.load_model("base")
 
-def speech_to_text(file: UploadFile) -> str:
+def speech_to_text(file: UploadFile) -> tuple[str, str]:
     """
     Convert an uploaded audio file into text using Whisper Tiny.
     """
@@ -25,12 +25,15 @@ def speech_to_text(file: UploadFile) -> str:
         tmp.write(audio_bytes)
         tmp.close()  # Close the file so ffmpeg can access it
 
-        # Load the Whisper Tiny model. (Consider caching this model on app startup in production.)
-        model = whisper.load_model("tiny")
+        # Load the Whisper Base model. (Consider caching this model on app startup in production.)
+        model = whisper.load_model("medium")
 
         # Transcribe the audio file.
-        result = model.transcribe(tmp.name, language="en")
-        return result.get("text", "")
+        result = model.transcribe(tmp.name, language=None)
+        text = result.get("text", "")
+        language = result.get("language", "")
+        
+        return text, language
     finally:
         # Delete the temporary file
         try:

@@ -74,45 +74,84 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
 
 ### Frontend
 1. **Clone the Frontend repo:**
-     ```bash
+     ```
      git clone https://github.com/rraj-official/quark-hackathon-frontend.git
      ```
 2. **Install Dependencies:**
 
-   ```bash
+   ```
    bun install
    ```
 
 3. **Run the Development Server:**
 
-   ```bash
+   ```
    bun dev
    ```
 
 ### Backend
-1. **Set Up a Virtual Environment:**
+1. **Setup Environment:**
+   - **Set Up Ollama Service:**
+     - #### macOS
+       - **Install via Homebrew (Recommended):**
+         ```bash
+         brew install ollama
+         ```
+       - **Manual Installation:**  
+         - Download the latest `.pkg` file from [Ollama’s official website](https://ollama.com).
+         - Open the downloaded file and follow the installation prompts.
+       - **Verify Installation:**
+         ```bash
+         ollama --version
+         ```
+     - #### Linux (Debian/Ubuntu)
+       - **Install using `.deb` package:**
+         ```bash
+         curl -fsSL https://ollama.com/install.sh | sh
+         ```
+       - **Manual Installation:**  
+         - Download the `.deb` package from [Ollama’s official website](https://ollama.com).
+         - Install the package using:
+           ```bash
+           sudo dpkg -i ollama-<version>.deb
+           sudo apt-get install -f  # Fix dependencies if needed
+           ```
+       - **Verify Installation:**
+         ```bash
+         ollama --version
+         ```
+     - #### Windows
+       - **Install via MSI Installer:**  
+         - Download the latest `.msi` installer from [Ollama’s official website](https://ollama.com).
+         - Run the installer and follow the setup instructions.
+       - **Install via Windows Package Manager (winget):**
+         ```bash
+         winget install ollama
+         ```
+       - **Verify Installation:**  
+         Open PowerShell or Command Prompt and run:
+         ```bash
+         ollama --version
+         ```
+   - **Set Up a Virtual Environment:**
+     - **macOS/Linux:**
+       ```bash
+       python3 -m venv venv
+       source venv/bin/activate
+       ```
+     - **Windows:**
+       ```bash
+       python -m venv venv
+       venv\Scripts\activate
+       ```
 
-   - **macOS/Linux:**
+3. **Install Required Python Packages:**
 
-     ```bash
-     python3 -m venv venv
-     source venv/bin/activate
-     ```
-
-   - **Windows:**
-
-     ```bash
-     python -m venv venv
-     venv\Scripts\activate
-     ```
-
-2. **Install Required Python Packages:**
-
-   ```bash
+   ```
    pip install -r requirements.txt
    ```
 
-3. **Run the Backend Server:**
+4. **Run the Backend Server:**
 
    ```bash
    python3 app.py

@@ -15,3 +15,4 @@ whisper
 torch
 torchvision
 torchaudio
+requests
