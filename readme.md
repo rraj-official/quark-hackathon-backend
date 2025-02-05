@@ -25,6 +25,9 @@ InsureWise is built on an open-source framework that emphasizes flexibility, tra
 
 ![InsureWise Screenshot](screenshot.png)
 
+## Video Demo
+https://www.youtube.com/watch?v=zTwVBB9UB9s
+
 ## Context
 
 - **Scalable and Multilingual:**  
