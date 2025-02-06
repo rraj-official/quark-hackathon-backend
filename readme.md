@@ -72,6 +72,7 @@ https://www.youtube.com/watch?v=zTwVBB9UB9s
   - **Models:**  
     - Small language model: **Mistral**
     - Embedded model: **nomic-embed-text-v1**
+    - Speech-to-Text Model: **Whisper Medium** (for voice support)  
   - **Approach:** Retrieval-Augmented Generation (RAG)
 - **Frontend:**
   - **Framework:** Next.js
