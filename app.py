@@ -7,8 +7,8 @@ from pydantic import BaseModel
 from typing import List
 import sys
 import uvicorn
-from pydub import AudioSegment
-from pydub.playback import play
+# from pydub import AudioSegment
+# from pydub.playback import play
 # Import our language chain components and helper functions
 from langchain_community.llms import Ollama
 from document_loader import load_documents_into_database
@@ -48,7 +48,7 @@ class AnswerResponse(BaseModel):
     answer: str
 
 def translate_text(text, source='auto', target='es'):
-    url = 'http://localhost:5000/translate'
+    url = 'http://127.0.0.1:5000/translate'
     payload = {
         'q': text,
         'source': source,
@@ -59,7 +59,7 @@ def translate_text(text, source='auto', target='es'):
     if response.ok:
         return response.json()
     else:
-        print("Error:", response.status_code, response.text)
+        print("Error: Translation Server Error", response.status_code, response.text)
         return None
 
 # On startup, we load our models and build our chain.
@@ -122,6 +122,7 @@ def startup_event():
         result = final_chain.invoke(inputs)
         # Optionally save to memory
         memory.save_context(inputs, {"answer": result["answer"]})
+        print("Computation Complete")
         return result["answer"]
 
     # Save our callable chain on the FastAPI app state.
@@ -133,6 +134,7 @@ def process_text(request: ChatRequest):
     try:
         # Process the content of the last message in the list.
         text = request.messages[-1].content
+        print("Request received")
         translated_text_json_1 = translate_text(text, target='en')
         answer = app.state.chat(translated_text_json_1['translatedText'])
         translated_text_json_2 = translate_text(answer, source='en', target = translated_text_json_1['detectedSourceLanguage'])
